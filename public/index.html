@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n 클론</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 좌측 메뉴 슬라이드 스타일 */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+        }
+
+        .plugin-item {
+            background-color: #34495e;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: grab;
+            text-align: center;
+        }
+
+        .plugin-item:active {
+            cursor: grabbing;
+        }
+
+        /* 메인 작업 영역 스타일 */
+        .main {
+            flex: 1;
+            background-color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .drop-zone {
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .dropped-plugin {
+            position: absolute;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>플러그인 목록</h2>
+        <div class="plugin-item" draggable="true" data-plugin="플러그인 1">플러그인 1</div>
+        <div class="plugin-item" draggable="true" data-plugin="플러그인 2">플러그인 2</div>
+        <div class="plugin-item" draggable="true" data-plugin="플러그인 3">플러그인 3</div>
+    </div>
+    <div class="main">
+        <div class="drop-zone">
+            드래그 앤 드롭 영역
+        </div>
+    </div>
+
+    <script>
+        const pluginItems = document.querySelectorAll('.plugin-item');
+        const dropZone = document.querySelector('.drop-zone');
+
+        pluginItems.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.dataset.plugin);
+            });
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#3498db';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#bdc3c7';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#bdc3c7';
+
+            const pluginName = e.dataTransfer.getData('text/plain');
+            const droppedElement = document.createElement('div');
+            droppedElement.className = 'dropped-plugin';
+            droppedElement.textContent = pluginName;
+
+            // 드롭된 위치에 따라 위치 설정
+            const rect = dropZone.getBoundingClientRect();
+            droppedElement.style.left = `${e.clientX - rect.left}px`;
+            droppedElement.style.top = `${e.clientY - rect.top}px`;
+
+            dropZone.appendChild(droppedElement);
+        });
+    </script>
+</body>
+</html>
